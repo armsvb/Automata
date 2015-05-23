@@ -28,3 +28,19 @@ BOOST_AUTO_TEST_CASE( isSuccess_Failure ){
 	BOOST_CHECK( !promise.isSuccess() );
 
 }
+
+
+BOOST_AUTO_TEST_CASE( isSuccess_WithValue ){
+	Automata::TaskPromiseWithValue<int> promise;
+	
+	BOOST_CHECK( !promise.isComplete() );
+	BOOST_CHECK( !promise.isSuccess() );
+	
+	std::shared_ptr<int> result(new int(42));
+	promise.setFailed(result);
+	
+	BOOST_CHECK( promise.isComplete() );
+	BOOST_CHECK( !promise.isSuccess() );
+	BOOST_CHECK_EQUAL( *promise.getValue(), 42);
+
+}

@@ -32,5 +32,7 @@ namespace Automata{
 	bool TaskPromise::isSuccess(void){
 		return _success;
 	}//bool TaskPromise::isSuccess(void)
+	
+	
 
 }//namespace Automata

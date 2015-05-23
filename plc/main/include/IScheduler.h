@@ -95,7 +95,57 @@ namespace Automata{
 		void setSuccess(void);
 
 
-	};// class TaskPromiseBase
+	};// class TaskPromise
+	
+	
+	/** Base class for task promises.
+	 *
+	 * Provided basic complete, not complete status, as well as success, failure status
+	 * If more return data is needed this class can be inherited from.
+	 *
+	 */
+	template<typename T>
+	class TaskPromiseWithValue: public TaskPromise{
+	private:
+	
+		std::shared_ptr<T> _result;
+
+	public:
+		TaskPromiseWithValue():TaskPromise(){};
+		virtual ~TaskPromiseWithValue(){};
+		
+		
+		/** Returns the value set by the task
+		 *
+		 * Returned value undefined if isComplete is false
+		 */
+		 std::shared_ptr<T> getValue(void){
+		 	return _result;
+		 }
+		
+		
+		/** Sets the promise result to complete with failure.
+		 *
+		 * isComplete will return true and isSuccess will return false
+		 *
+		 */
+		void setFailed(std::shared_ptr<T> result){
+			_result = result;
+			TaskPromise::setFailed();
+		}
+
+		/** Sets the promise result to complete with success.
+		 *
+		 * isComplete will return true and isSuccess will return true
+		 *
+		 */
+		void setSuccess(std::shared_ptr<T> result){
+			_result = result;
+			TaskPromise::setSuccess();
+		}
+
+
+	};// class TaskPromise
 
 	class ITask{
 	public:
