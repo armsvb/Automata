@@ -1,4 +1,4 @@
 # Automata
 Automata PLC
 
-Software to turn an ordinary computer into a PLC.
+Turn a Raspberry Pi or an ordinary computer into a PLC.
