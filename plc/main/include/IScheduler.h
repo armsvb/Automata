@@ -23,12 +23,12 @@ namespace Automata{
 	/** Execution type for scheduled task.
 	 *
 	 */
-	enum TASK_TYPE{
+	enum QUEUE{
 
-		TASK_PROGRAM = 0, ///< PLC Program that should execute consecutively in the main thread
-		TASK_IO = 1			///< IO tasks that should execute asynchronously in a separate thread
+		QUEUE_PROGRAM = 0, 	///< PLC Program that should execute consecutively in the main thread
+		QUEUE_IO = 1		///< IO tasks that should execute asynchronously in a separate thread
 
-	};//enum TASK_TYPE
+	};//enum QUEUE
 
 	/** Current state of the task.
 	 *
@@ -173,7 +173,7 @@ namespace Automata{
 		*	on the main thread. If the task type is TASK_IO the task will be executed
 		*	asynchronously in a separate thread.
 		*/
-		virtual std::shared_ptr<TaskPromise> once(std::shared_ptr<TaskPromise> task,TASK_TYPE type,float time) = 0;
+		virtual std::shared_ptr<TaskPromise> once(std::shared_ptr<TaskPromise> task,QUEUE type,float time) = 0;
 		
 	
 	};//class IScheduler
