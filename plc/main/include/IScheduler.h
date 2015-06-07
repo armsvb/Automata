@@ -20,7 +20,9 @@ This file is part of Automata PLC.
 
 namespace Automata{
 
-	/** Execution type for scheduled task.
+	class ITask;
+
+	/** Execution queue for scheduled task.
 	 *
 	 */
 	enum QUEUE{
@@ -29,6 +31,16 @@ namespace Automata{
 		QUEUE_IO = 1		///< IO tasks that should execute asynchronously in a separate thread
 
 	};//enum QUEUE
+	
+	/** Task execution type
+	*
+	*/
+	enum TASK_TYPE{
+	
+		TASK_ONE_SHOT = 0, 	///< Executes task once
+		TASK_INTERVAL = 1 	///< Reoccuring task
+	
+	};//enum TASK_TYPE
 
 	/** Current state of the task.
 	 *
@@ -53,6 +65,9 @@ namespace Automata{
 	
 		std::atomic_bool _complete;
 		std::atomic_bool _success;
+		std::atomic_bool _canceled;
+		
+		
 
 	protected:
 
@@ -80,6 +95,11 @@ namespace Automata{
 		 */
 		bool isSuccess(void);
 		
+		/** Returns true if the task was canceled.
+		 *
+		 */
+		bool isCanceled(void);
+		
 		/** Sets the promise result to complete with failure.
 		 *
 		 * isComplete will return true and isSuccess will return false
@@ -93,6 +113,44 @@ namespace Automata{
 		 *
 		 */
 		void setSuccess(void);
+		
+		/** Sets the promise result as canceled
+		*
+		* isCanceled will return true
+		* isComplete will return false and isSucces will return false
+		*/
+		void setCanceled(void);
+		
+		/** Adds task to a queue of tasks to execute on successful completion of this promise
+		*
+		* If the promise has already completed successfully, the task will execute immediately on the current thread.
+		* If the promise has not completed yet, the task will be queued and will execute when the task completes successfully
+		* in the thread that setSuccess was called on.
+		*
+		* If the promise is canceled or completes with failure, the task will not be executed
+		*/
+		void onSuccess(std::shared_ptr<ITask> task);
+		
+		/** Adds task to a queue of task to execute on failure of this promise
+		*
+		* If the promise has already completed with a failure, the task will execute immediately on the current thread.
+		* If the promise has not completed yet, the task will be queued and will execute when the task completes with failure
+		* in the thread that setFailure was called on.
+		*
+		* If the promise is canceled or completes with succuess, the task will not be executed
+		*/
+		void onFailure(std::shared_ptr<ITask> task);
+		
+		/** Adds task to a queue of tasks to execute when the promise is canceled
+		*
+		* If the promise has already been canceled, the task will execute immediately on the current thread.
+		* If the promise has not been canceled yet, the task will be queued and will execute when the promise is canceled
+		* in the thread that setCanceled was called on.
+		*
+		* If the promise is not canceled the task will not execute
+		*/
+		void onCancel(std::shared_ptr<ITask> task);
+		
 
 
 	};// class TaskPromise

@@ -30,6 +30,32 @@ BOOST_AUTO_TEST_CASE( isSuccess_Failure ){
 }
 
 
+BOOST_AUTO_TEST_CASE( isCanceled ){
+	Automata::TaskPromise promise;
+	
+	promise.setSuccess();
+	promise.setCanceled();
+	
+	BOOST_CHECK( promise.isCanceled() );
+	BOOST_CHECK( !promise.isComplete() );
+	BOOST_CHECK( !promise.isSuccess() );
+
+}
+
+class TestTaskPromiseTask: public Automata::ITask{
+public:
+
+	
+
+}
+
+BOOST_AUTO_TEST_CASE( onSuccess ){
+	Automata::TaskPromise promise;
+	
+	
+
+}
+
 BOOST_AUTO_TEST_CASE( isSuccess_WithValue ){
 	Automata::TaskPromiseWithValue<int> promise;
 	
