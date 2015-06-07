@@ -42,12 +42,6 @@ BOOST_AUTO_TEST_CASE( isCanceled ){
 
 }
 
-class TestTaskPromiseTask: public Automata::ITask{
-public:
-
-	
-
-}
 
 BOOST_AUTO_TEST_CASE( onSuccess ){
 	Automata::TaskPromise promise;

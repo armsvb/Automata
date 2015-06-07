@@ -7,5 +7,7 @@ all: $(BASE)/bin/test/testScheduler
 test: $(BASE)/bin/test/testScheduler 
 	$(BASE)/bin/test/testScheduler --show_progress
 	
-$(BASE)/bin/test/testScheduler: testTaskPromise.cc
-	$(CC) $(DEBUG) -o $(BASE)/bin/test/testScheduler testTaskPromise.cc $(CFLAGS) $(LDFLAGS) -L$(BASE)/bin/lib -lautomataPLC  -lboost_unit_test_framework  
+$(BASE)/bin/test/testScheduler: testTaskPromise.cc testITask.cc
+	$(CC) $(DEBUG) -o $(BASE)/bin/test/testScheduler testTaskPromise.cc testITask.cc $(CFLAGS) $(LDFLAGS) -L$(BASE)/bin/lib -lautomataPLC  -lboost_unit_test_framework  
+	
+

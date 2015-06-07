@@ -21,6 +21,7 @@ This file is part of Automata PLC.
 namespace Automata{
 
 	class ITask;
+	class IScheduler;
 
 	/** Execution queue for scheduled task.
 	 *
@@ -206,11 +207,18 @@ namespace Automata{
 	};// class TaskPromise
 
 	class ITask{
+	private:
+		std::shared_ptr<TaskPromise> _promise;
+		
 	public:
-		ITask(){};
-		virtual ~ITask(){};
+		ITask();
+		virtual ~ITask();
 
-		virtual void run(std::shared_ptr<TaskPromise> promise)=0;
+		virtual void run(void)=0;
+		
+		virtual std::shared_ptr<TaskPromise> getPromise();
+		
+		virtual void cancel(void);
 
 	};
 
@@ -219,10 +227,15 @@ namespace Automata{
 	* Performs tasks related to task scheduling
 	*
 	*/
-	class IScheduler{
+	class Scheduler{
+	private:
+		Scheduler(){};
+		
 	public:
-		IScheduler(){};
-		virtual ~IScheduler(){};
+		
+		~Scheduler(){};
+		
+		std::shared_ptr<Scheduler> getInstance(void);
 		
 		/** Schedules a task to be completed at some point in the future.
 		*
@@ -231,9 +244,9 @@ namespace Automata{
 		*	on the main thread. If the task type is TASK_IO the task will be executed
 		*	asynchronously in a separate thread.
 		*/
-		virtual std::shared_ptr<TaskPromise> once(std::shared_ptr<TaskPromise> task,QUEUE type,float time) = 0;
+		std::shared_ptr<TaskPromise> once(std::shared_ptr<TaskPromise> task,QUEUE type,float time);
 		
 	
-	};//class IScheduler
+	};//class Scheduler
 
 }//namespace Automata
