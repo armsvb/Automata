@@ -220,7 +220,15 @@ namespace Automata{
 		
 		virtual void cancel(void);
 
-	};
+	};//class ITask
+	
+	template<typename T>
+	class TaskBase: public ITask{
+	public:
+	
+		TaskBase();
+	
+	};//class TaskBase: public ITask
 
 	/** Task scheduler interface.
 	*
