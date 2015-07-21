@@ -167,7 +167,7 @@ namespace Automata{
 	class TaskPromiseWithValue: public TaskPromise{
 	private:
 	
-		std::shared_ptr<T> _result;
+		T _result;
 
 	public:
 		TaskPromiseWithValue():TaskPromise(){};
@@ -178,7 +178,7 @@ namespace Automata{
 		 *
 		 * Returned value undefined if isComplete is false
 		 */
-		 std::shared_ptr<T> getValue(void){
+		 T getValue(void){
 		 	return _result;
 		 }
 		
@@ -188,7 +188,7 @@ namespace Automata{
 		 * isComplete will return true and isSuccess will return false
 		 *
 		 */
-		void setFailed(std::shared_ptr<T> result){
+		void setFailed(T result){
 			_result = result;
 			TaskPromise::setFailed();
 		}
@@ -198,7 +198,7 @@ namespace Automata{
 		 * isComplete will return true and isSuccess will return true
 		 *
 		 */
-		void setSuccess(std::shared_ptr<T> result){
+		void setSuccess(T result){
 			_result = result;
 			TaskPromise::setSuccess();
 		}
@@ -207,7 +207,7 @@ namespace Automata{
 	};// class TaskPromise
 
 	class ITask{
-	private:
+	protected:
 		std::shared_ptr<TaskPromise> _promise;
 		
 	public:
@@ -226,7 +226,10 @@ namespace Automata{
 	class TaskBase: public ITask{
 	public:
 	
-		TaskBase();
+		TaskBase():
+			ITask(){
+			_promise = std::shared_ptr<TaskPromise>(new TaskPromiseWithValue<T>());
+		}
 	
 	};//class TaskBase: public ITask
 

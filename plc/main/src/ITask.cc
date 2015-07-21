@@ -19,12 +19,6 @@ namespace Automata{
 		
 		}
 		
-		
-		template<typename T>
-		TaskBase<T>::TaskBase():
-			ITask(){
-			_promise = std::shared_ptr<TaskPromise>(new TaskPromiseWithValue<T>());
-		}
 
 
 };//namespace Automata

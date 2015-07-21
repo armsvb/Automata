@@ -5,6 +5,7 @@
 #include <boost/test/unit_test.hpp>
 
 
+
 class ITaskMock1: public Automata::ITask{
 
 public:
@@ -15,7 +16,20 @@ public:
 
 };//class ITaskMock1: public Automata::ITask
 
-BOOST_AUTO_TEST_CASE( getPromise ){
+
+template<typename T>
+class ITaskMock2: public Automata::TaskBase<T>{
+
+public:
+
+	virtual void run(void){
+		std::dynamic_pointer_cast<Automata::TaskPromiseWithValue<int>>(this->getPromise())->setSuccess(42);
+		
+	}//virtual void run(void)
+
+};//class ITaskMock1: public Automata::ITask
+
+BOOST_AUTO_TEST_CASE( ITask__getPromise ){
 
 	Automata::ITask*task = new ITaskMock1();
 	
@@ -24,5 +38,22 @@ BOOST_AUTO_TEST_CASE( getPromise ){
 	promise = task->getPromise();
 	
 	BOOST_CHECK( promise );
+
+}
+
+BOOST_AUTO_TEST_CASE( TaskBase ){
+
+	Automata::TaskBase<int>*task = new ITaskMock2<int>();
+	
+	std::shared_ptr<Automata::TaskPromiseWithValue<float>> promise;
+	
+	
+	promise = std::dynamic_pointer_cast<Automata::TaskPromiseWithValue<float>>(task->getPromise());
+	
+	BOOST_CHECK( promise );
+	
+	
+	BOOST_CHECK(promise->getValue() == 42);
+
 
 }

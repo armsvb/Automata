@@ -56,11 +56,11 @@ BOOST_AUTO_TEST_CASE( isSuccess_WithValue ){
 	BOOST_CHECK( !promise.isComplete() );
 	BOOST_CHECK( !promise.isSuccess() );
 	
-	std::shared_ptr<int> result(new int(42));
+	int result = 42;
 	promise.setFailed(result);
 	
 	BOOST_CHECK( promise.isComplete() );
 	BOOST_CHECK( !promise.isSuccess() );
-	BOOST_CHECK_EQUAL( *promise.getValue(), 42);
+	BOOST_CHECK_EQUAL( promise.getValue(), 42);
 
 }
