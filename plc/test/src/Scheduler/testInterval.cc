@@ -1,4 +1,4 @@
-#include "../../../main/include/IScheduler.h"
+#include "../../../main/include/Scheduler.h"
 
 //#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE ITask
