@@ -22,6 +22,7 @@ This file is part of Automata PLC.
 namespace Automata{
 	namespace Scheduler{
 
+		template<class T>
 		class ITask;
 		class IScheduler;
 
@@ -46,11 +47,12 @@ namespace Automata{
 		};//enum TASK_TYPE
 
 	
+		template<class T>
 		class ITask{
 		public:
 	
-			ITask();
-			virtual ~ITask();
+			ITask(){}
+			virtual ~ITask(){}
 
 			/** called to run the task
 			*
@@ -66,7 +68,7 @@ namespace Automata{
 			*
 			* the value will be true if the task completed. If the task failed or was canceled it will be false.
 			*/
-			virtual std::future<bool> getFuture(void)=0;
+			virtual std::future<T> getFuture(void)=0;
 		
 			/** returns a positive number in seconds for the next time to execute.
 			* If the value if <= 0 or NaN the task will not be rescheduled
@@ -76,53 +78,78 @@ namespace Automata{
 		};//class ITask
 	
 	
-		class OneShot: public ITask{
+		template<class T>
+		class OneShot: public ITask<T>{
 		private:
-			/** Implementation of OneShot
-			*/
-			struct Impl;
-			std::unique_ptr<Impl> _impl;	///< Implementation of OneShot
+		
+			std::atomic_bool isExecuting;
+			std::promise<T> promise;
+			std::function<T (void)> task;
 			
 		protected:
 		
 			/** returns the task's promise
 			*/
-			virtual std::promise<bool>& getPromise(void);
+			virtual std::promise<T>& getPromise(void){
+				return promise;	
+			}
 		
 		public:
 	
 			/** Default constructor.
 			*
 			*/
-			OneShot();
+			OneShot(){
+				isExecuting=false;
+				task = nullptr;
+			}
+			
+			/** Lambda constructor.
+			*
+			*/
+			OneShot(std::function<T (void)> task){
+				isExecuting=false;
+				this->task = task;
+			}
 		
 			/** destructor.
 			*/
-			~OneShot();
+			~OneShot(){
+			
+			}
 		
 			/** called to run the task
 			*
 			*/
-			virtual void run(void)=0;
+			virtual void run(void){
+				getPromise().set_value(task());
+			}
 		
 			/** returns the type of task
 			*
 			*/
-			virtual TASK_TYPE getTaskType(void);
+			virtual TASK_TYPE getTaskType(void){
+				return TASK_TYPE::TASK_ONE_SHOT;
+			}
 		
 			/** return the task's future.
 			*
 			* the value will be true if the task completed. If the task failed or was canceled it will be false.
 			*/
-			virtual std::future<bool> getFuture(void);
+			virtual std::future<T> getFuture(void){
+				return promise.get_future();
+			}
 		
 			/** returns a positive number in seconds for the next time to execute.
 			* If the value if <= 0 or NaN the task will not be rescheduled
 			*/
-			virtual double nextInterval(void);
+			virtual double nextInterval(void){
+				return -1;
+			}
 		
 		
 		};//class OneShot: public ITask
+		
 
 
 		/** Task scheduler interface.
