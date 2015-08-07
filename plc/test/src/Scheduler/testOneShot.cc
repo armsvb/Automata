@@ -14,13 +14,13 @@ public:
 		getPromise().set_value(true);
 	}//virtual void run(void)
 
-};//class ITaskMock1: public Automata::ITask
+};//class OneShotMock1: public Automata::Scheduler::OneShot<bool>
 
 
 
 BOOST_AUTO_TEST_CASE( OneShot__baseTest ){
 
-	Automata::Scheduler::ITask<bool>*task = new OneShotMock1();
+	Automata::Scheduler::OneShot<bool>*task = new OneShotMock1();
 	
 	std::future<bool> future = task->getFuture();
 	
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE( OneShot__baseTest ){
 
 BOOST_AUTO_TEST_CASE( OneShot__Lambda ){
 
-	Automata::Scheduler::ITask<bool>*task = new Automata::Scheduler::OneShot<bool> ( []() { return true;} );
+	Automata::Scheduler::OneShot<bool>*task = new Automata::Scheduler::OneShot<bool> ( []() { return true;} );
 	
 	std::future<bool> future = task->getFuture();
 	
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE( OneShot__Lambda ){
 
 BOOST_AUTO_TEST_CASE( OneShot__Lambda_False ){
 
-	Automata::Scheduler::ITask<bool>*task = new Automata::Scheduler::OneShot<bool> ( []() { return false;} );
+	Automata::Scheduler::OneShot<bool>*task = new Automata::Scheduler::OneShot<bool> ( []() { return false;} );
 	
 	std::future<bool> future = task->getFuture();
 	
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE( OneShot__Lambda_Double ){
 	double t1 = 7.0;
 	double t2 = 42.0;
 
-	Automata::Scheduler::ITask<double>*task = new Automata::Scheduler::OneShot<double> ( [&]() { return t1-t2;} );
+	Automata::Scheduler::OneShot<double>*task = new Automata::Scheduler::OneShot<double> ( [&]() { return t1-t2;} );
 	
 	std::future<double> future = task->getFuture();
 	

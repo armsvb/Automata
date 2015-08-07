@@ -22,7 +22,6 @@ This file is part of Automata PLC.
 namespace Automata{
 	namespace Scheduler{
 
-		template<class T>
 		class ITask;
 		class IScheduler;
 
@@ -47,7 +46,6 @@ namespace Automata{
 		};//enum TASK_TYPE
 
 	
-		template<class T>
 		class ITask{
 		public:
 	
@@ -64,12 +62,6 @@ namespace Automata{
 			*/
 			virtual TASK_TYPE getTaskType(void)=0;
 		
-			/** return the task's future.
-			*
-			* the value will be true if the task completed. If the task failed or was canceled it will be false.
-			*/
-			virtual std::future<T> getFuture(void)=0;
-		
 			/** returns a positive number in seconds for the next time to execute.
 			* If the value if <= 0 or NaN the task will not be rescheduled
 			*/
@@ -78,11 +70,14 @@ namespace Automata{
 		};//class ITask
 	
 	
+		/** Represents a task that should be executed once and only once.
+		*
+		*
+		*/
 		template<class T>
-		class OneShot: public ITask<T>{
+		class OneShot: public ITask{
 		private:
 		
-			std::atomic_bool isExecuting;
 			std::promise<T> promise;
 			std::function<T (void)> task;
 			
@@ -100,7 +95,6 @@ namespace Automata{
 			*
 			*/
 			OneShot(){
-				isExecuting=false;
 				task = nullptr;
 			}
 			
@@ -108,7 +102,6 @@ namespace Automata{
 			*
 			*/
 			OneShot(std::function<T (void)> task){
-				isExecuting=false;
 				this->task = task;
 			}
 		
@@ -134,7 +127,6 @@ namespace Automata{
 		
 			/** return the task's future.
 			*
-			* the value will be true if the task completed. If the task failed or was canceled it will be false.
 			*/
 			virtual std::future<T> getFuture(void){
 				return promise.get_future();
@@ -150,6 +142,73 @@ namespace Automata{
 		
 		};//class OneShot: public ITask
 		
+		
+		/** Represents a task that should be executed indefinitely on a time interval.
+		*
+		*/
+		class Interval: public ITask{
+		private:
+		
+			std::atomic<double> interval;
+			std::function<void (void)> task;
+					
+		public:
+	
+			/** Default constructor.
+			
+				\param interval the number of seconds between invocations
+			*/
+			Interval(double interval){
+				task = nullptr;
+				this->interval = interval;
+			}
+			
+			/** Lambda constructor.
+			*
+				\param interval the number of seconds between invocations
+				\param task the task to execute
+			*/
+			Interval(double interval, std::function<void (void)> task){
+				this->task = task;
+				this->interval = interval;
+			}
+		
+			/** destructor.
+			*/
+			Interval(){
+			
+			}
+		
+			/** called to run the task
+			*
+			*/
+			virtual void run(void){
+				task();
+			}
+			
+			/** Cancels the task.
+			* If the task is currently executing, it will continue to execute.
+			*/
+			virtual void cancel(void){
+				interval = -1;
+			}
+		
+			/** returns the type of task
+			*
+			*/
+			virtual TASK_TYPE getTaskType(void){
+				return TASK_TYPE::TASK_INTERVAL;
+			}
+		
+			/** returns a positive number in seconds for the next time to execute.
+			* If the value if <= 0 or NaN the task will not be rescheduled
+			*/
+			virtual double nextInterval(void){
+				return interval;
+			}
+		
+		
+		};//class Interval: public ITask
 
 
 		/** Task scheduler interface.
