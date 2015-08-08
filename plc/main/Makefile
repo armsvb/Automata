@@ -3,11 +3,11 @@ include ../../Makefile.inc
 all: $(BASE)/bin/lib/libautomataPLC.a
 	
 	
-$(BASE)/bin/lib/libautomataPLC.a: $(BASE)/build/plc/DefaultScheduler.o
-	ar rcs $(BASE)/bin/lib/libautomataPLC.a $(BASE)/build/plc/DefaultScheduler.o
+$(BASE)/bin/lib/libautomataPLC.a: $(BASE)/build/plc/Scheduler.o
+	ar rcs $(BASE)/bin/lib/libautomataPLC.a $(BASE)/build/plc/Scheduler.o
 	
 
-$(BASE)/build/plc/DefaultScheduler.o: src/DefaultScheduler.cc ./include/Scheduler.h
-	$(CC) $(DEBUG) -c src/DefaultScheduler.cc $(CFLAGS) -I ./include -o $(BASE)/build/plc/DefaultScheduler.o	
+$(BASE)/build/plc/Scheduler.o: src/Scheduler.cc ./include/Scheduler.h
+	$(CC) $(DEBUG) -c src/Scheduler.cc $(CFLAGS) -I ./include -o $(BASE)/build/plc/Scheduler.o
 
 	
